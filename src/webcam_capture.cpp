@@ -12,7 +12,8 @@ int main(int argc, char *argv[])
     cv::VideoCapture camera; //OpenCV video capture object
     cv::Mat image; //OpenCV image object
 	int cam_id; //camera id . Associated to device number in /dev/videoX
-	cv::Scalar_<unsigned char> px_value; //pixel value (4-element vector)
+	cv::Vec3b px_value, new_pixel; //pixel value
+	cv::Mat	new_pixels(3,3, CV_8UC3, cv::Scalar(255,255,255)); 
 	int user_key; //user pressed key to quit
 
 	//check user args
@@ -51,7 +52,20 @@ int main(int argc, char *argv[])
         }
 
         //show image in a window
+	px_value = image.at<cv::Vec3b>(image.rows/2,image.cols/2) ;
+	std::cout << px_value <<  std::endl;
+	/*
+	//Forma cutre
+	new_pixel[0]=255;
+	new_pixel[1]=255;
+	new_pixel[2]=255;
+	image.at<cv::Vec3b>(image.rows/2,image.cols/2) = new_pixel;
+	*/
+	//Forma elegant
+	new_pixels.copyTo(image.rowRange(image.rows/2-1,image.rows/2+2).colRange(image.cols/2-1,image.cols/2+2));
+	//std::cout << new_pixels <<  std::endl;
         cv::imshow("Output Window", image);
+
 
 		//Waits 30 millisecond to check if 'q' key has been pressed. If so, breaks the loop. Otherwise continues.
     	if( (unsigned char)(cv::waitKey(30) & 0xff) == 'q' ) break; 
